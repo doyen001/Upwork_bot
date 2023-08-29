@@ -1,0 +1,36 @@
+Brown Wei
+Senior Deep learning engineer | Data Scientist
+Have experience in Tensorflow, keras,Pytorch, scikit-learn, etc. Proficient in other programming languages such as Python and databases such as SQL, MongoDB, etc. Have sufficient experience in building and maintaining CI/CD pipelines. Especially have rich experience in developing E-Commerce sites.
+67347313, Singapore
+30
+----------------------------------------------------------------------------------------------------
+Junior Web Developer, ByteDance
+Singapore, Singapore
+2012.6 - 2017.7
+
+Full Stack Developer, Kforce
+San Francisco, California, United States
+2018.8 - 2020.2
+
+Blockchain Developer, Leeway Hertz
+San Francisco, California, United States
+2020.3 - 2022.3
+
+Blockchain Developer, Ezetech
+New York, New York, United States
+2022.4 - 2023.4
+----------------------------------------------------------------------------------------------------
+National University of Singapore
+Bachelor of Computer Science (BCompSc)
+Computer science
+2008 - 2012
+----------------------------------------------------------------------------------------------------
+Chinese, 1
+----------------------------------------------------------------------------------------------------
+Python, Java, Jupyter, TensorFlow, Keras, PyTorch, Django Stack, Flask, Chatbot, GPT-4, Computer Vision, Natural Language, Reinforcement Learning, Generative AI
+AI & Machine Learning, Data Design & Visualization, Data Extraction/ETL, DevOps & Solution Architecture
+----------------------------------------------------------------------------------------------------
+304 Orchard Road #04-93 Lucky Plaza, 238863
+Singapore
+Singapore
+me.png
