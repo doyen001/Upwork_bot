@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support import ui
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import *
 from time import sleep
 from datetime import datetime
@@ -54,7 +55,6 @@ def parseProfile(profilePath):
     city = last[1].replace('\n', '').split(', ')[0]
     location = last[2]
     avatar = last[3]
-
     information = {
         'first_name': first_name,
         'last_name': last_name,
@@ -100,8 +100,7 @@ def waitUntil(callback, driver, selector):
             pass
 
 def clickByMouse(element):
-    ActionChains(driver).click(element)\
-                        .perform()
+    ActionChains(driver).click(element).perform()
 
 def selectDropDown(dropdownId, itemSelector, country):
     driver.execute_script(f'document.querySelector(\'#{dropdownId}\').click()')
@@ -169,29 +168,12 @@ def addSkill(driver, inp, skill, field = "skills-input"):
 def addService(driver, services):
     waitUntil(lambda x: x.click(), driver, 'div[data-test="dropdown-toggle"]')
     sleep(1)
-    for service in services:
-        driver.execute_script(f'''
-            // document.querySelector(\'div[data-test="dropdown-toggle"]\').click()
-            var services = document.querySelectorAll('span.air3-menu-checkbox-labels');
-            var toselect;
-            for (let i = 0; i < services.length; i++) {{
-                console.log(services[i], '{service}');
-                if (services[i].textContent.indexOf('{service}') >= 0) {{
-                    toselect = services[i].parentNode.parentNode;
-                    break;
-                }}
-            }}
-            if (toselect) {{
-                if (toselect.getAttribute("aria-selected") == 'false') {{
-                    toselect.parentNode.parentNode.parentNode.click();
-                    setTimeout(() => toselect.click(), 300);
-                }}
-            }}
-        ''')
-        sleep(0.1)
+    print('h1')
+    print(services)
+    waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, "button[aria-label='Web Development']").click())
+    
 
 def configLast(driver, country, street, city, zipcode, phone, photo):
-    global photoDir
     selectDateDropDown("country-label", "span.air3-menu-item-text", country)
     waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, 'input[aria-labelledby="street-label"]').send_keys(street))
     
@@ -200,16 +182,26 @@ def configLast(driver, country, street, city, zipcode, phone, photo):
     waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, 'input[aria-labelledby="postal-code-label"]').send_keys(zipcode))
     waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, 'input[aria-labelledby^="dropdown-label-phone-number"]').send_keys(phone))
 
-    waitInfinite(lambda: driver.execute_script("document.querySelector('button[data-cy=\"open-loader\"]').click()"))
-    sleep(0.5)
+    waitInfinite(lambda: driver.execute_script("document.querySelector('button[data-qa=\"open-loader\"]').click()"))
+    sleep(3)
+    print(photoDir +str(random.randint(0,9))+".png")
+    while True:
+        try:
 
-    waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, 'input[type="file"]').send_keys(photoDir +"input" +str(random.randint(0,9))+".jpg"))
-    waitInfinite(lambda: driver.execute_script("document.querySelectorAll('button.air3-btn.air3-btn-primary')[1].click()"))
+            file_input = driver.find_element(By.NAME, "imageUpload")
+            break
+        except:
+            sleep(1)
+    file_input.send_keys(photoDir +str(random.randint(0,9))+".png")
+    # waitInfinite(lambda: driver.find_element(By.NAME, 'imageUpload').send_keys(photoDir +str(random.randint(0,9))+".png"))
+    sleep(3)
+    waitInfinite(lambda: driver.execute_script("document.querySelector('button[data-qa=\"btn-save\"]').click()"))
+    # waitInfinite(lambda: driver.execute_script("document.querySelectorAll('button.air3-btn.air3-btn-primary')[1].click()"))
 
 
 global expFlag, photoDir
 expFlag = True
-photoDir = 'C:\\Pictures\\'
+photoDir = 'C:\\Users\\Bang\\Pictures'
 
 curr_year = datetime.now().year
 today = str(datetime.today().date())
@@ -222,7 +214,14 @@ hasResume = True
 profile = parseProfile(profile)
 
 for i in range(30):
-    emailGetter = webdriver.Chrome()
+    # chrome_options_extension = webdriver.ChromeOptions()
+    # chrome_options_extension.add_extension(r'C:\Users\Bang\Documents\extension.crx')
+    path = os.path.dirname(r"C:\Users\Bang\Documents\extension\manifest.json")
+    op = Options()
+    op.add_argument(f"--load-extension={path}")
+    # op.add_extension('C:\Users\Bang\Documents\extension.crx')
+    # driver = webdriver.Firefox(executable_path="C:\geckodriver.exe", options=op)
+    emailGetter = webdriver.Chrome(options=op)
     emailGetter.get("https://www.minuteinbox.com/")
     tempURL = emailGetter.find_element(By.ID, "email").text
     
@@ -248,9 +247,7 @@ for i in range(30):
     selectDropDown("dropdown-label-7", "li.up-menu-item", profile['country'])
     driver.execute_script('document.querySelectorAll("span.up-checkbox-replacement-helper")[1].click()')
     sleep(1)
-    print("ba")
     driver.execute_script('document.getElementById("button-submit-form").click()')
-    print("aa")
     sleep(9)
 
     waitInfinite(verifyEmail)
@@ -271,10 +268,8 @@ for i in range(30):
 
     driver.execute_script('document.querySelector("button.air3-btn.mr-7.air3-btn-primary").click()')
     # driver.find_element(By.NAME, "button[data-qa='btn-apply']").click()
-    print('a')
     sleep(1)
     driver.find_element(By.XPATH, '//input[@value="FREELANCED_BEFORE"]').click()
-    print('b')
     # driver.execute_script('document.querySelector("button.air3-btn.air3-btn-primary").click()')
     driver.find_element(By.XPATH, '//*[@data-test="next-button"]').click()
     sleep(2)
@@ -333,7 +328,7 @@ for i in range(30):
 
     nexBtn = driver.find_element(By.CSS_SELECTOR, "button.air3-btn.air3-btn-primary.mb-0")
     driver.execute_script('document.querySelector("button.air3-btn.air3-btn-primary.mb-0").click()')    
-    sleep(2)
+    sleep(1)
     # inp_prof = driver.find_element(By.CSS_SELECTOR, "input[aria-labelledby=\"title-label\"]")
     # # inp_prof.click()
     # inp_prof.clear()
@@ -341,13 +336,19 @@ for i in range(30):
     input_role.clear()
 
     input_role.send_keys(profile['professional'])
-    nexBtn = driver.find_element(By.CSS_SELECTOR, "button[data-ev-label='wizard_next']")
-    clickByMouse(nexBtn)
+    sleep(1)
+
+    waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, "button[data-ev-label='wizard_next']").click())
+    # clickByMouse(nexBtn)
 
     sleep(1)
-    driver.find_element(By.XPATH, "//*[@data-ev-label='wizard_next']")
+    waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, "button[data-ev-label='wizard_next']").click())
+    # driver.find_element(By.XPATH, "//*[@data-ev-label='wizard_next']")
     sleep(1)
-    driver.execute_script('document.querySelector("button.air3-btn.air3-btn-primary.mb-0").click()')
+    # next language button
+    waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, "button[data-ev-label='wizard_next']").click())
+
+    # driver.execute_script('document.querySelector("button.air3-btn.air3-btn-primary.mb-0").click()')
     sleep(1)
 
     if driver.current_url == "https://www.upwork.com/nx/create-profile/certifications":
@@ -355,7 +356,8 @@ for i in range(30):
         driver.execute_script('document.querySelector("button.air3-btn.air3-btn-primary.mb-0").click()')
 
     waitInfinite(lambda: selectDateDropDown("dropdown-label-english", "span.air3-menu-item-text", 2))
-    waitInfinite(lambda: driver.execute_script('document.querySelector("button.air3-btn.air3-btn-primary.mb-0").click()'))
+    waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, "button[data-ev-label='wizard_next']").click())
+    # waitInfinite(lambda: driver.execute_script('document.querySelector("button.air3-btn.air3-btn-primary.mb-0").click()'))
 
     sleep(1)
     inp_skills = driver.find_element(By.CSS_SELECTOR, 'input[aria-labelledby="skills-input"]')
@@ -363,26 +365,36 @@ for i in range(30):
     for i in profile['skills']:
         addSkill(driver, inp_skills, i)
 
-    waitInfinite(lambda: driver.execute_script('document.querySelector("button.air3-btn.air3-btn-primary.mb-0").click()'))
+    waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, "button[data-ev-label='wizard_next']").click())
+    # waitInfinite(lambda: driver.execute_script('document.querySelector("button.air3-btn.air3-btn-primary.mb-0").click()'))
 
     sleep(1)
     waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, 'textarea[aria-labelledby="overview-label"]').clear())
     waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, 'textarea[aria-labelledby="overview-label"]').send_keys(profile['overview']))
     sleep(0.5)
-    clickByMouse(driver.find_element(By.CSS_SELECTOR, 'button.air3-btn.air3-btn-primary.mb-0'))
+    waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, "button[data-ev-label='wizard_next']").click())
+    # clickByMouse(driver.find_element(By.CSS_SELECTOR, 'button.air3-btn.air3-btn-primary'))
+
+    sleep(2)
+    # driver.find_element(By.CSS_SELECTOR, 'button[aria-label="Web Development"]').click()
+    driver.find_element(By.XPATH, "//button[@aria-label='Web Development']").click()
+    sleep(0.5)
+    driver.find_element(By.XPATH, "//button[@data-ev-label='wizard_next']").click()
+    
+    # waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, "button[data-ev-label='Web Development']").click())
+    # Web Development
+    # sleep(3)
+    # waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, "button[data-ev-label='wizard_next']").click())
+    # waitInfinite(lambda: driver.execute_script('document.querySelector("button.air3-btn.air3-btn-primary").click()'))
 
     sleep(3)
-    addService(driver, profile['services'])
-    waitInfinite(lambda: driver.execute_script('document.querySelector("button.air3-btn.air3-btn-primary.mb-0").click()'))
 
-    sleep(1)
-
-    inp_hr = driver.find_element(By.CSS_SELECTOR, 'input[aria-label="Hourly rate in $/hr"]')
-    inp_hr.clear()
+    inp_hr = driver.find_element(By.XPATH, '//input[@data-test="currency-input"]')
+    # inp_hr.clear()
     inp_hr.send_keys(str(profile['hourRate']))
         
-    waitInfinite(lambda: driver.execute_script('document.querySelector("button.air3-btn.air3-btn-primary.mb-0").click()'))
-
+    waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, "button[data-ev-label='wizard_next']").click())
+    # waitInfinite(lambda: driver.execute_script('document.querySelector("button.air3-btn.air3-btn-primary").click()'))
     sleep(1)
     configLast(
         driver,
@@ -395,9 +407,11 @@ for i in range(30):
     )
 
     sleep(4)
-    waitInfinite(lambda: driver.execute_script('document.querySelector("button.air3-btn.air3-btn-primary.mb-0").click()'))
+    waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, "button[data-ev-label='wizard_next']").click())
+    # waitInfinite(lambda: driver.execute_script('document.querySelector("button.air3-btn.air3-btn-primary").click()'))
     sleep(3)
-    waitInfinite(lambda: driver.execute_script('document.querySelector("button.air3-btn.width-md.m-0.air3-btn-primary").click()'))
+    waitInfinite(lambda: driver.find_element(By.CSS_SELECTOR, "button[data-ev-label='wizard_next']").click())
+    # waitInfinite(lambda: driver.execute_script('document.querySelector("button.air3-btn.width-md.m-0.air3-btn-primary").click()'))
 
     driver.get("https://www.upwork.com/nx/find-work/best-matches/?landing=announcement-TONB-2806")
 

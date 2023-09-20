@@ -27,8 +27,8 @@ Computer science
 ----------------------------------------------------------------------------------------------------
 Chinese, 1
 ----------------------------------------------------------------------------------------------------
-Python, Java, Jupyter, TensorFlow, Keras, PyTorch, Django Stack, Flask, Chatbot, GPT-4, Computer Vision, Natural Language, Reinforcement Learning, Generative AI
-AI & Machine Learning, Data Design & Visualization, Data Extraction/ETL, DevOps & Solution Architecture
+Python, React, React Native, Laravel, Next.js, PHP, Django Stack, Flask, Mobile App Development, GPT-4, Computer Vision, Natural Language, Reinforcement Learning, Generative AI
+Web Development, Mobile Development
 ----------------------------------------------------------------------------------------------------
 304 Orchard Road #04-93 Lucky Plaza, 238863
 Singapore
